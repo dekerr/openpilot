@@ -30,7 +30,7 @@ def ensure_st_up_to_date():
     print "waiting for board..."
     time.sleep(1)
 
-  if panda.bootstub or not panda.get_version().startswith(repo_version):
+  if panda.bootstub:# or not panda.get_version().startswith(repo_version):
     panda.flash()
 
   if panda.bootstub:
