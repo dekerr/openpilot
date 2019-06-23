@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 import os
 import time
+import subprocess
+def build_st(target, mkfile="Makefile"):
+  from panda import BASEDIR
+  cmd = 'cd %s && make -f %s clean && make -f %s %s >/dev/null' % (os.path.join(BASEDIR, "board"), mkfile, mkfile, target)
+  print("building st")
+  try:
+    output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
+  except subprocess.CalledProcessError as exception:
+    output = exception.output
+    returncode = exception.returncode
+    raise
 
 def ensure_st_up_to_date():
   from panda import Panda, PandaDFU, BASEDIR
@@ -29,9 +40,8 @@ def ensure_st_up_to_date():
 
     print "waiting for board..."
     time.sleep(1)
-
-  if panda.bootstub:# or not panda.get_version().startswith(repo_version):
-    panda.flash()
+  build_st("obj/panda.bin")
+  panda.flash()
 
   if panda.bootstub:
     panda.recover()
